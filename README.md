@@ -16,14 +16,14 @@ Usually, a set of videos similar to the test videos, known as the validation set
 4. **high_th_m**: This parameter is only effective when `dynamic_tuning` is enabled. Set it to a value between `0.02` and `0.1`. If you observe more drops in `high_th` for crowded scenes compared to normal scenes, set this parameter to higher values.
 5. **match_th_first**: Set it to a value between `0` and `0.67`. Higher values relax the association conditions, which can be useful when there is poor overlap between the bounding boxes of the same object across video frames or when the object’s shape changes significantly. It is recommended to use higher values for this parameter.
 6. **match_th_first_m**: This parameter is only effective when `dynamic_tuning` is enabled. Set it to a value between `0.02` and `0.08`. Increase the value if the association for high-score detections is too strict, causing ID switches in crowded scenes.
-7. **match_th_second **: Set it to a value between `0` and `1`. Higher values relax the association conditions, which can be useful when there is poor overlap between the bounding boxes of the same object across video frames. It is recommended to use lower values for this parameter.
+7. **match_th_second**: Set it to a value between `0` and `1`. Higher values relax the association conditions, which can be useful when there is poor overlap between the bounding boxes of the same object across video frames. It is recommended to use lower values for this parameter.
 8. **low_th**: Set this to the lowest prediction score reported by the object detector for occluded or blurred objects.
 9. **new_track_th**: When `dynamic_tuning` is enabled, set this parameter to a value below `high_th`. Otherwise, set it to a value slightly above `high_th`.
 10. **new_track_th_m**: This parameter is only effective when `dynamic_tuning` is enabled. Set it to a value between `0.02` and `0.08`. Increase the value if you observe too many ID switches for objects within the crowd.
 11. **marginal_timeout**: Set this parameter to determine how many frames the tracker attempts to revisit a track lost at frame margins. Set it to an integer value between `0.1 * frame_rate` and `0.9 * frame_rate`. Higher values allow a track to disappear for a longer time.
 12. **central_timeout**: Set this parameter to determine how many frames the tracker attempts to revisit a track lost at the frame center. Set it to an integer value between `0.5 * frame_rate` and `1.5 * frame_rate`. Higher values allow a track to disappear for a longer time.
 13. **horizontal_margin**: Determines the horizontal margins used in attempts to revisit a track lost at frame margins. Set it to an integer value between `0.05 * frame_width` and `0.1 * frame_width`. 
-14. ** vertical_margin**: Determines the vertical margins used in attempts to revisit a track lost at frame margins. Set it to an integer value between `0.05 * frame_ height` and `0.1 * frame_ height`. 
+14. **vertical_margin**: Determines the vertical margins used in attempts to revisit a track lost at frame margins. Set it to an integer value between `0.05 * frame_ height` and `0.1 * frame_ height`. 
 15. **frame_width**: An integer indicating the width of video frames.
 16. **frame_ height**: An integer indicating the width of video frames.
 
