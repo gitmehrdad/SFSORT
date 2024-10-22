@@ -28,7 +28,7 @@ Usually, a set of videos similar to the test videos, known as the validation set
 16. **frame_ height**: An integer indicating the width of video frames.
 
 ## How to access scientific details about SFSORT?
-Our paper provides full details, which are available at [arXiv:2404.07553](https://arxiv.org/abs/2404.07553).
+[Our paper](https://arxiv.org/abs/2404.07553) provides full details.
 
 ## Citation
 ```
