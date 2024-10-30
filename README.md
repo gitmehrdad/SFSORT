@@ -1,5 +1,10 @@
 # SFSORT: Scene Features-based Simple Online Real-Time Tracker
 
+## What's new in SFSORT version 4.1?
+- Bug Fixes in Track Management: Resolved minor bugs in identifying and managing lost tracks
+- Enhanced Parameter Validation: Improved validation for tracking parameters to ensure values are within expected ranges, reducing the risk of errors during runtime.
+- Linear Assignment Bug Fix: Fixed an issue in the linear assignment process, resulting in more accurate object matching and association between frames.
+
 ## What is multi-object tracking?
 Multi-object tracking (MOT) is the process of detecting and tracking multiple moving objects over time in a video. The objects can belong to the same class (e.g., all humans) or different classes (e.g., humans and cars).
 
@@ -11,7 +16,7 @@ Multi-object tracking (MOT) is the process of detecting and tracking multiple mo
 ## How to tune tracking parameters?
 Usually, a set of videos similar to the test videos, known as the validation set, is used to tune tracking parameters. To optimize tracking accuracy, an iterative experiment is conducted where parameter values are changed in each iteration, and tracking accuracy on the validation videos is measured to find the values that maximize accuracy. Since the number of possible parameter combinations in such an experiment is high, the following points about each parameter can significantly reduce the number of iterations:
 1. **dynamic_tuning**: Set this to `True` if the tracker needs to process frames with a large difference in the number of objects.
-2. **cth**: This parameter is only effective when `dynamic_tuning` is enabled. Set it to the average prediction score reported by the object detector for all objects. Default value: `0.7`.
+2. **cth**: This parameter is only effective when `dynamic_tuning` is enabled. Set it to the average prediction score reported by the object detector for all objects. Default value: `0.5`.
 3. **high_th**: Set this to the lowest prediction score reported by the object detector for normal and clear objects.
 4. **high_th_m**: This parameter is only effective when `dynamic_tuning` is enabled. Set it to a value between `0.02` and `0.1`. If you observe more drops in `high_th` for crowded scenes compared to normal scenes, set this parameter to higher values.
 5. **match_th_first**: Set it to a value between `0` and `0.67`. Higher values relax the association conditions, which can be useful when there is poor overlap between the bounding boxes of the same object across video frames or when the object’s shape changes significantly. It is recommended to use higher values for this parameter.
