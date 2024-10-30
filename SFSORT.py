@@ -2,7 +2,7 @@
 # ****************** Sharif University of Technology ***************** #
 # *************** Department of Electrical Engineering *************** #
 # ************************ Deep Learning Lab ************************* #
-# ************************ SFSORT Version 4.0 ************************ #
+# ************************ SFSORT Version 4.1 ************************ #
 # ************ Authors: Mehrdad Morsali - Zeinab Sharifi ************* #
 # *********** mehrdadmorsali@gmail.com - zsh.5ooo@gmail.com ********** #
 # ******************************************************************** #
@@ -60,48 +60,98 @@ class SFSORT:
     
     def __init__(self, args):
         """Initialize a tracker with given arguments""" 
-        args = DotAccess(args)        
-        # Register tracking arguments
-        
-        self.low_th = args.low_th
-        self.match_th_second = args.match_th_second
-        
-        self.high_th = args.high_th
-        self.match_th_first = args.match_th_first     
-        self.new_track_th = args.new_track_th 
-        
-        if args.dynamic_tuning:
-            self.cth = args.cth if args.cth else 0.7
-            self.hthm = args.high_th_m if args.high_th_m else 0
-            self.nthm = args.new_track_th_m if args.new_track_th_m else 0
-            self.mthm = args.match_th_first_m if args.match_th_first_m else 0
+        args = DotAccess(args)     
+
+        # Register tracking arguments, setting default values if the argument is not provided      
+        if args.high_th is None:
+            self.high_th = 0.6
+        else:
+            self.high_th = self.clamp(args.high_th, 0, 1)
             
-                
-        self.marginal_timeout = args.marginal_timeout
-        self.central_timeout = args.central_timeout       
-        self.l_margin = args.horizontal_margin
-        self.t_margin = args.vertical_margin
-        self.r_margin = args.frame_width - args.horizontal_margin
-        self.b_margin = args.frame_height - args.vertical_margin     
+        if args.match_th_first is None:
+            self.match_th_first = 0.67
+        else:
+            self.match_th_first = self.clamp(args.match_th_first, 0, 0.67)  
+            
+        if args.new_track_th is None:
+            self.new_track_th = 0.7
+        else:
+            self.new_track_th = self.clamp(args.new_track_th, self.high_th, 1)          
         
+        if args.low_th is None:
+            self.low_th = 0.1
+        else:
+            self.low_th = self.clamp(args.low_th, 0, self.high_th)       
+  
+        if args.match_th_second is None:
+            self.match_th_second = 0.3
+        else:
+            self.match_th_second = self.clamp(args.match_th_second, 0, 1)     
+  
+        self.dynamic_tuning = False
+        if args.dynamic_tuning is not None:
+            self.cth = 0.5
+            args.high_th_m = 0.0
+            args.new_track_th_m = 0.0
+            args.match_th_first_m = 0.0
+            if args.dynamic_tuning:
+                self.dynamic_tuning = True
+                if args.cth is not None:
+                    self.cth = self.clamp(args.cth, args.low_th, 1)      
+                if args.high_th_m is not None:
+                    self.high_th_m = self.clamp(args.high_th_m, 0.02, 0.1)   
+                if args.new_track_th_m is not None:
+                    self.new_track_th_m = self.clamp(args.new_track_th_m, 0.02, 0.08)                    
+                if args.match_th_first_m is not None:
+                    self.match_th_first_m = self.clamp(args.match_th_first_m, 0.02, 0.08)   
+                    
+        if args.marginal_timeout is None:
+            self.marginal_timeout = 0
+        else:
+            self.marginal_timeout = self.clamp(args.marginal_timeout, 0, 500) 
+            
+        if args.central_timeout is None:
+            self.central_timeout = 0
+        else:
+            self.central_timeout = self.clamp(args.central_timeout, 0, 1000)            
+        
+        self.l_margin = 0
+        self.r_margin = 0
+        if args.frame_width:
+            self.r_margin = args.frame_width
+            if args.horizontal_margin is not None:                             
+                self.l_margin = self.clamp(args.horizontal_margin, 0, args.frame_width) 
+                self.r_margin = self.clamp(args.frame_width - args.horizontal_margin, 0, args.frame_width) 
+        
+        self.t_margin = 0
+        self.b_margin = 0
+        if args.frame_height:
+            self.b_margin = args.frame_height
+            if args.vertical_margin is not None:                             
+                self.t_margin = self.clamp(args.vertical_margin, 0, args.frame_height) 
+                self.b_margin = self.clamp(args.frame_height - args.vertical_margin , 0, args.frame_height)   
+               
         # Initialize the tracker
         self.frame_no = 0      
         self.id_counter = 0       
         self.active_tracks = []         
         self.lost_tracks = [] 
-               
+        
     def update(self, boxes, scores):
         """Updates tracker with new detections"""
         # Adjust dynamic arguments
-        count = len(scores[scores>self.cth])
-        
-        if count < 1:
-          count = 1
-
-        lnc = np.log10(count)
-        hth = self.high_th - (self.hthm * lnc)
-        nth = self.new_track_th + (self.nthm * lnc)
-        mth = self.match_th_first - (self.mthm * lnc)
+        hth = self.high_th 
+        nth = self.new_track_th 
+        mth = self.match_th_first     
+        if self.dynamic_tuning:
+            count = len(scores[scores>self.cth])     
+            if count < 1:
+              count = 1
+              
+            lnc = np.log10(count)           
+            hth = self.clamp(hth - (self.high_th_m * lnc), 0, 1)
+            nth = self.clamp(nth + (self.new_track_th_m * lnc), hth, 1)    
+            mth = self.clamp(mth - (self.match_th_first_m * lnc), 0, 0.67)  
                   
         # Increase frame number
         self.frame_no += 1
@@ -109,16 +159,15 @@ class SFSORT:
         # Variable: Active tracks in the next frame
         next_active_tracks = []
         
-        # Remove long-time lost tracks          
-        for track in self.lost_tracks:
+        # Remove long-time lost tracks      
+        all_lost_tracks = self.lost_tracks.copy()
+        for track in all_lost_tracks:
             if track.state == TrackState.Lost_Central:
                 if self.frame_no - track.last_frame > self.central_timeout:
-                    self.lost_tracks.remove(track)
-                    del track
+                    self.lost_tracks.remove(track)                   
             else:
                 if self.frame_no - track.last_frame > self.marginal_timeout:
-                    self.lost_tracks.remove(track)
-                    del track      
+                    self.lost_tracks.remove(track)     
                     
         # Gather out all previous tracks
         track_pool = self.active_tracks + self.lost_tracks  
@@ -189,8 +238,8 @@ class SFSORT:
         for track in next_lost_tracks:
             if track not in self.lost_tracks:
                 self.lost_tracks.append(track)
-                u = track.bbox[0] + (track.bbox[2] - track.bbox[0]/2)              
-                v = track.bbox[1] + (track.bbox[3] - track.bbox[1]/2)
+                u = track.bbox[0] + (track.bbox[2] - track.bbox[0])/2             
+                v = track.bbox[1] + (track.bbox[3] - track.bbox[1])/2
                 if (self.l_margin < u < self.r_margin) and (self.t_margin < v < self.b_margin):                   
                     track.state = TrackState.Lost_Central                        
                 else:
@@ -200,6 +249,11 @@ class SFSORT:
         self.active_tracks = next_active_tracks.copy()
 
         return np.asarray([[x.bbox, x.track_id] for x in next_active_tracks], dtype=object)
+
+    @staticmethod
+    def clamp(value, min_value, max_value):
+        """ Clamps a value within the specified minimum and maximum bounds."""
+        return max(min_value, min(value, max_value))
 
     @staticmethod
     def calculate_cost(tracks, boxes, iou_only=False):
@@ -263,7 +317,6 @@ class SFSORT:
 
         return 1.0 - cost 
  
- 
     @staticmethod
     def linear_assignment(cost_matrix, thresh):
         """Linear assignment"""
@@ -276,13 +329,12 @@ class SFSORT:
             unmatched_a = np.where(x < 0)[0]
             unmatched_b = np.where(y < 0)[0]
         else:
-            y, x = linear_sum_assignment(cost_matrix) 
-            matches = np.asarray([[i, x] for i, x in enumerate(x) if cost_matrix[i, x] <= thresh])
-            unmatched = np.ones(cost_matrix.shape)
-            for i, xi in matches:
-                unmatched[i, xi] = 0.0
-            unmatched_a = np.where(unmatched.all(1))[0]
-            unmatched_b = np.where(unmatched.all(0))[0]
+            row_ind, col_ind = linear_sum_assignment(cost_matrix)  
+            matches = np.array([[row, col] for row, col in zip(row_ind, col_ind) if cost_matrix[row, col] <= thresh])  
+            matched_rows = set(row_ind)  
+            matched_cols = set(col_ind)  
+            unmatched_a = np.array([i for i in range(cost_matrix.shape[0]) if i not in matched_rows])  
+            unmatched_b = np.array([j for j in range(cost_matrix.shape[1]) if j not in matched_cols])  
             
         return matches, unmatched_a, unmatched_b
     
