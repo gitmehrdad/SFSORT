@@ -2,7 +2,7 @@
 # ****************** Sharif University of Technology ***************** #
 # *************** Department of Electrical Engineering *************** #
 # ************************ Deep Learning Lab ************************* #
-# ************************ SFSORT Version 4.1 ************************ #
+# ************************ SFSORT Version 4.2 ************************ #
 # ************ Authors: Mehrdad Morsali - Zeinab Sharifi ************* #
 # *********** mehrdadmorsali@gmail.com - zsh.5ooo@gmail.com ********** #
 # ******************************************************************** #
@@ -91,9 +91,9 @@ class SFSORT:
         self.dynamic_tuning = False
         if args.dynamic_tuning is not None:
             self.cth = 0.5
-            args.high_th_m = 0.0
-            args.new_track_th_m = 0.0
-            args.match_th_first_m = 0.0
+            self.high_th_m = 0.0
+            self.new_track_th_m = 0.0
+            self.match_th_first_m = 0.0
             if args.dynamic_tuning:
                 self.dynamic_tuning = True
                 if args.cth is not None:
