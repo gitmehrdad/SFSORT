@@ -1,6 +1,6 @@
 # SFSORT: Scene Features-based Simple Online Real-Time Tracker
 
-## What's new in SFSORT version 4.1?
+## What's new in SFSORT version 4.2?
 - Bug Fixes in Track Management: Resolved minor bugs in identifying and managing lost tracks
 - Enhanced Parameter Validation: Improved validation for tracking parameters to ensure values are within expected ranges, reducing the risk of errors during runtime.
 - Linear Assignment Bug Fix: Fixed an issue in the linear assignment process, resulting in more accurate object matching and association between frames.
