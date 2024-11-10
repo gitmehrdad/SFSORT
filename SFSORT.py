@@ -208,8 +208,12 @@ class SFSORT:
         
         # Add unmatched tracks to the lost list
         unmatched_track_pool = []                                         
-        for track_address in unmatched_tracks:
-            unmatched_track_pool.append(track_pool[track_address])   
+        if high_score.any():
+            for track_address in unmatched_tracks:
+                unmatched_track_pool.append(track_pool[track_address])   
+        else:
+            unmatched_track_pool = track_pool
+
         next_lost_tracks = unmatched_track_pool.copy()
         
         # Try to associate remained tracks with intermediate score detections 
@@ -331,8 +335,8 @@ class SFSORT:
         else:
             row_ind, col_ind = linear_sum_assignment(cost_matrix)  
             matches = np.array([[row, col] for row, col in zip(row_ind, col_ind) if cost_matrix[row, col] <= thresh])  
-            matched_rows = set(row_ind)  
-            matched_cols = set(col_ind)  
+            matched_rows = set(matches[:, 0]) if matches.size > 0 else set()
+            matched_cols = set(matches[:, 1]) if matches.size > 0 else set()
             unmatched_a = np.array([i for i in range(cost_matrix.shape[0]) if i not in matched_rows])  
             unmatched_b = np.array([j for j in range(cost_matrix.shape[1]) if j not in matched_cols])  
             
