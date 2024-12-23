@@ -30,7 +30,7 @@ Usually, a set of videos similar to the test videos, known as the validation set
 13. **horizontal_margin**: Determines the horizontal margins used in attempts to revisit a track lost at frame margins. Set it to an integer value between `0.05 * frame_width` and `0.1 * frame_width`. 
 14. **vertical_margin**: Determines the vertical margins used in attempts to revisit a track lost at frame margins. Set it to an integer value between `0.05 * frame_ height` and `0.1 * frame_ height`. 
 15. **frame_width**: An integer indicating the width of video frames.
-16. **frame_ height**: An integer indicating the width of video frames.
+16. **frame_ height**: An integer indicating the height of video frames.
 
 ## How to access scientific details about SFSORT?
 [Our paper](https://arxiv.org/abs/2404.07553) provides full details.
