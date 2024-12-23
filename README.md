@@ -1,4 +1,6 @@
 # SFSORT: Scene Features-based Simple Online Real-Time Tracker
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/sfsort-scene-features-based-simple-online/multi-object-tracking-on-mot20-1)](https://paperswithcode.com/sota/multi-object-tracking-on-mot20-1?p=sfsort-scene-features-based-simple-online)
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/sfsort-scene-features-based-simple-online/multi-object-tracking-on-mot17)](https://paperswithcode.com/sota/multi-object-tracking-on-mot17?p=sfsort-scene-features-based-simple-online)
 
 ## What's new in SFSORT version 4.2?
 - Bug Fixes in Track Management: Resolved minor bugs in identifying and managing lost tracks
